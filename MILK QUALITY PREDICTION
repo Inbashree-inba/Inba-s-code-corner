@@ -1,0 +1,217 @@
+ from google.colab import drive
+drive.mount('/content/drive')
+!pip install mysql-connector-python
+ import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn import tree
+from sklearn.ensemble import RandomForestClassifier
+#importing milk data
+data = pd.read_csv("/content/milk.csv")
+#print("\nThe Milk dataset:\n")
+#print (data.head())
+
+y = data.Grade
+X = data.drop('Grade', axis=1)
+
+
+X_train, X_test, y_train, y_test = train_test_split(X, y,test_size=0.1)
+
+model =RandomForestClassifier()
+# model = tree.DecisionTreeClassifier()
+model.fit(X_train, y_train)
+
+confidence = model.score(X_test, y_test)
+print("\nThe confidence score:\n")
+print(confidence)
+
+#predicting the forcasts
+y_pred = model.predict(X_test)
+
+x=np.array(y_pred).tolist()
+
+#printing first 5 predictions
+print("\nThe prediction:\n")
+for i in range(0,3):
+   print(x[i])
+    
+#printing first five expectations
+print("\nThe expectation:\n")
+print (y_test.head())
+
+data.head()
+
+import mysql.connector
+
+mydb = mysql.connector.connect(
+  host="sql6.freesqldatabase.com",
+  user="sql6515146",
+  password="Mf8ec6w62Q",
+  database="sql6515146"
+)
+
+mycursor = mydb.cursor()
+
+#mycursor.execute("SELECT *FROM test ORDER BY id DESC LIMIT 1")
+
+#myresult = mycursor.fetchall()
+
+mycursor.execute("SELECT id FROM Milk ORDER BY id DESC LIMIT 1")
+z = mycursor.fetchall()
+#print(type(ph))
+a=z[0]
+#print(type(a))
+b=a[0]
+id=b
+print(id)
+
+mycursor.execute("SELECT phvalue FROM Milk ORDER BY id DESC LIMIT 1")
+ph = mycursor.fetchall()
+#print(type(ph))
+a=ph[0]
+#print(type(a))
+b=a[0]
+#print(type(b))
+ph=float(b)
+
+print(ph)
+
+mycursor.execute("SELECT temperature FROM Milk ORDER BY id DESC LIMIT 1")
+z = mycursor.fetchall()
+#print(type(ph))
+a=z[0]
+#print(type(a))
+b=a[0]
+temprature=b
+print(temprature)
+
+mycursor.execute("SELECT fat FROM Milk ORDER BY id DESC LIMIT 1")
+z = mycursor.fetchall()
+#print(type(ph))
+a=z[0]
+#print(type(a))
+b=a[0]
+fat=b
+
+print(fat)
+
+mycursor.execute("SELECT turbidity FROM Milk ORDER BY id DESC LIMIT 1")
+z = mycursor.fetchall()
+#print(type(ph))
+a=z[0]
+#print(type(a))
+b=a[0]
+Turbidity=b
+
+print(Turbidity)
+
+mycursor.execute("SELECT coloursensor FROM Milk ORDER BY id DESC LIMIT 1")
+z = mycursor.fetchall()
+#print(type(ph))
+a=z[0]
+#print(type(a))
+b=a[0]
+colour=b
+
+print(colour)
+
+#for x in myresult:
+#  print(x)
+
+a=ph
+b=temprature
+c=0
+d=0
+e=fat
+f=Turbidity
+g=colour
+#a=float(input("a"))
+#b=int(input("b"))
+#c=int(input("c"))
+#d=int(input("d"))
+#e=int(input("e"))
+#f=int(input("f"))
+#g=int(input("g"))
+# initialize list of lists
+data = [a,b,c,d,e,f,g]
+  
+# Create the pandas DataFrame
+data={'pH':[a],	'Temprature':[b],	'Taste':[c],	'Odor':[d],	'Fat':[e],	'Turbidity':[f],	'Colour':[g]}
+df = pd.DataFrame(data)
+  
+# print dataframe.
+df
+
+def high():
+  import mysql.connector
+  mydb = mysql.connector.connect(
+    host="sql6.freesqldatabase.com",
+    user="sql6515146",
+    password="Mf8ec6w62Q",
+    database="sql6515146"
+  )
+
+
+  mycursor = mydb.cursor()
+
+  sql = ("UPDATE Milk SET grade = 'A' WHERE id = '%s'"%id)
+
+  mycursor.execute(sql)
+
+  mydb.commit()
+  print(mycursor.rowcount, "record(s) affected")
+  
+  def low():
+  import mysql.connector
+  mydb = mysql.connector.connect(
+    host="sql6.freesqldatabase.com",
+    user="sql6515146",
+    password="Mf8ec6w62Q",
+    database="sql6515146"
+  )
+
+  mycursor = mydb.cursor()
+
+  sql = ("UPDATE Milk SET grade = 'C' WHERE id = '%s'"%id)
+
+  mycursor.execute(sql)
+
+  mydb.commit()
+  print(mycursor.rowcount, "record(s) affected")
+  
+  def medium():
+  import mysql.connector
+  mydb = mysql.connector.connect(
+    host="sql6.freesqldatabase.com",
+    user="sql6515146",
+    password="Mf8ec6w62Q",
+    database="sql6515146"
+  )
+
+  mycursor = mydb.cursor()
+
+  sql = ("UPDATE Milk SET grade = 'B' WHERE id = '%s'"%id)
+
+  mycursor.execute(sql)
+
+  mydb.commit()
+  print(mycursor.rowcount, "record(s) affected")
+  
+  #predicting the forcasts
+y_pred = model.predict(df)
+
+x=np.array(y_pred).tolist()
+
+#printing first 5 predictions
+print("\nThe prediction:\n",*x)   
+
+if x[0] in ['high']:
+  print("high")
+  high()
+
+if x[0] in ['low']:
+  low()
+
+if x[0] in ['medium']:
+  medium()
+
